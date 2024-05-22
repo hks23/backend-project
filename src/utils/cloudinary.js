@@ -23,11 +23,11 @@ const uploadOnCloudinary = async(localFilePath) =>{
     }
     catch(error){
         fs.unlinkSync(localFilePath) //remove the locally saved temp files as the upload operation failed
-
+        return null;
     }
 }
 
-
+export {uploadOnCloudinary}
 
 
 // cloudinary.uploader.upload("https://upload.wikimedia.org/wikipedia/commons/a/ae/Olympic_flag.jpg",

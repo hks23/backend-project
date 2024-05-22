@@ -7,6 +7,8 @@ class apiResponse {
     }
 }
 
+export { apiResponse }
+
 //HTTP status codes 
 // Informational responses (100 – 199)
 // Successful responses (200 – 299)
