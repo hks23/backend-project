@@ -19,12 +19,6 @@ connectDB() //establish connection with db
 })
 
 
-
-
-
-
-
-
 /* BELOW IS ONE APPROACH TO CONNECT DATABASE WITH MONGOOSE IT USES TRY CATCH -- AYSNC AWAIT APPROACH
 import express from "express"
 const app = express()
