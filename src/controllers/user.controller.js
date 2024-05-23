@@ -18,27 +18,31 @@ const registerUser = asyncHandler( async(req,res) =>{
     
     const{fullName, email, username, password} = req.body
     console.log("email: ", email); 
+    console.log("email: ", fullName); 
 
-    if(fullName === ""){
-        throw new apiError(400 , "Full name is required")
-    }
+    // if(fullName === ""){
+    //     throw new apiError(400 , "Full name is required")
+    // }
     //instead of using the above if for each field we can write like this 
     if([fullName,email,username,password].some((field)=>field?.trim()==="")) //some method is used
     {
         throw new apiError(400,"All fields are required")
     }
 
-    const existedUser = User.findOne({
+    const existedUser = await User.findOne({
         $or: [{username},{email}]
     })
 
     if(existedUser){
-        throw new apiError(409 , "User with email or username already exists")
+        throw new apiError (409 , "User with email or username already exists")
     }
     
     //using multer to access files and 
     const avatarLocalPath = req.files?.avatar[0]?.path; //? syntax coz we r not sure if file milegi ya nahi
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    let coverImageLocalPath;
+    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+        coverImageLocalPath = req.files.coverImage[0].path
+    }
 
     if(!avatarLocalPath){
         throw new apiError(400, "Avatar file is required")
@@ -46,9 +50,10 @@ const registerUser = asyncHandler( async(req,res) =>{
     //await coz video uplaod karne me to time lagega 
     const avatar = await uploadOnCloudinary(avatarLocalPath)
     const coverImage = await uploadOnCloudinary(coverImageLocalPath)
+    // console.log(avatar)
 
     if(!avatar){
-        throw new apiError(400 , "Avatar file is required")
+        throw new apiError(400 , "Avatar file is required ")
     }
 
     const user = await User.create(

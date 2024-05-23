@@ -1,18 +1,12 @@
-
-
 const asyncHandler = (requestHandler)=> {
     return (req,res,next) =>{
         Promise.resolve(requestHandler(req, res, next)).catch((err)=> next(err))
     }
 }
 
- 
-
-
-
+export {asyncHandler}
 
 /*THE BELOW CODE USE TRY AND CATCH STATEMENTS 
-
 const asyncHandler = (fn)=> { async (req,res,next) => { //this line is same as 
     try{
         await fn(req, res , next)
@@ -28,4 +22,3 @@ const asyncHandler = (fn)=> { async (req,res,next) => { //this line is same as
 // const asyncHandler = (func) => async() =>{}
 */
 
-export {asyncHandler}

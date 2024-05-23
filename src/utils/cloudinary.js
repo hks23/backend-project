@@ -14,10 +14,11 @@ const uploadOnCloudinary = async(localFilePath) =>{
             return null
         }
         //return the file on cloudinary
-        cloudinary.uploader.upload(localFilePath, {resource_type: "auto"})
+        const response = await cloudinary.uploader.upload(localFilePath, {resource_type: "auto"})
         
         //file has been uplaoded successfully
-        console.log("File is uploaded on cloudinary ", response.url);
+        // console.log("File is uploaded on cloudinary ", response.url);
+        fs.unlinkSync(localFilePath) //if file is successfull uploaded remove it (coz we are just testing)
         return response;
 
     }
@@ -27,7 +28,7 @@ const uploadOnCloudinary = async(localFilePath) =>{
     }
 }
 
-export {uploadOnCloudinary}
+export { uploadOnCloudinary }
 
 
 // cloudinary.uploader.upload("https://upload.wikimedia.org/wikipedia/commons/a/ae/Olympic_flag.jpg",
