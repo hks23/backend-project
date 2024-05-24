@@ -4,6 +4,7 @@ import {User} from "../models/user.models.js"
 import {uploadOnCloudinary} from  "../utils/cloudinary.js"
 import { apiResponse } from "../utils/apiResponse.js"
 import jwt from "jsonwebtoken"
+import mongoose from "mongoose"
 
 const generateAccessAndRefreshTokens = async(userId)=>{
     try{
@@ -144,7 +145,7 @@ const logoutUser = asyncHandler(async(req,res)=>{
     User.findByIdAndUpdate(
         req.user._id,
         {
-            $set: {refreshToken: undefined }
+            $unset: {refreshToken: 1}
         },
         {new:true}
     )
@@ -206,6 +207,8 @@ const refreshAccessToken = asyncHandler(async(req,res)=>{
 //change password code
 const changeCurrentPassword = asyncHandler(async(req,res)=>{
     const {oldPassword , newPassword} = req.body
+
+    const user = await User.findById(req.user?._id)
     const pswdCheck = await user.isPasswordCorrect(oldPassword)
     if(!pswdCheck){
         throw new apiError(400 , "Invalid Old password")
@@ -221,7 +224,7 @@ const changeCurrentPassword = asyncHandler(async(req,res)=>{
 const getCurrentUser = asyncHandler(async(req,res)=>{
     return res
             .status(200)
-            .json(200, req.user , "current user fetched successfully")
+            .json(new apiResponse(200,req.user,"User fetched successfully"))
 })
 //Update account details like name email
 const updateAccountDetails = asyncHandler(async(req,res)=>{
@@ -317,7 +320,7 @@ const getUserChannelProfile = asyncHandler(async(req,res)=>{
         },
         {
             $lookup:{ //very IMP code look for AGGREGATION PIPELINE ON MONGODB DOCS
-                form: "Subscription",
+                from: "Subscriptions",
                 localField: "_id",
                 foreignField: "channel",
                 as: "subscribers"
@@ -325,7 +328,7 @@ const getUserChannelProfile = asyncHandler(async(req,res)=>{
         },
         {
             $lookup:{ //very IMP code look for AGGREGATION PIPELINE ON MONGODB DOCS
-                form: "Subscription",
+                from: "Subscriptions",
                 localField: "_id",
                 foreignField: "subscriber",
                 as: "subscribedTo"
@@ -379,7 +382,7 @@ const getWatchHistory = asyncHandler(async(req,res) =>{
         },
         {
             $lookup:{
-                from: "videos",
+                from: "Videos",
                 localField: "watchHistory", //local field refers to schema we r currently in
                 foreignField: "_id", //foreign field refers to schema jisse match karake data lana hai
                 as: "watchHistory", 
@@ -417,7 +420,7 @@ const getWatchHistory = asyncHandler(async(req,res) =>{
     return res
     .status(200)
     .json(
-        new ApiResponse(
+        new apiResponse(
             200,
             user[0].watchHistory,
             "Watch history fetched successfully"

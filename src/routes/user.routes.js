@@ -5,7 +5,7 @@ import { loginUser, logoutUser, registerUser, refreshAccessToken, changeCurrentP
     getWatchHistory} from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { verify } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 const router = Router()
 
@@ -23,7 +23,6 @@ router.route("/register").post(
     registerUser)
 
 router.route("/login").post(loginUser)
-
 //secured routes 
 //verifyJWT is a middleware to allow only registered users to use those methods
 //post(X,Y) here X is a middleware and Y is the actual function that will be called when route is called
@@ -35,7 +34,7 @@ router.route("/update-account").patch(verifyJWT, updateAccountDetails) //patch b
 router.route("/avatar").patch(verifyJWT , upload.single("avatar") , updateUserAvatar)
 router.route("/cover-image").patch(verifyJWT , upload.single("coverImage"), updateUserCoverImage)
 router.route("/c/:username").get(verifyJWT , getUserChannelProfile)
-rouoter.route("/history").get(verifyJWT, getWatchHistory)
+router.route("/history").get(verifyJWT, getWatchHistory)
 
 
 export default router
