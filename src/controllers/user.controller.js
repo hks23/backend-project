@@ -162,7 +162,7 @@ const logoutUser = asyncHandler(async(req,res)=>{
 const refreshAccessToken = asyncHandler(async(req,res)=>{
     //first access refresh token from cookies - thats why we installed cookie parser
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
-    if(incomingRefreshToken){
+    if(!incomingRefreshToken){
         throw new apiError(401,"Unauthorised request")
     }
     
